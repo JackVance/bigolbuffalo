@@ -2,6 +2,7 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy({ "src/static": "/" });
   eleventyConfig.addPassthroughCopy("src/genstyle.css");
   eleventyConfig.addPassthroughCopy("src/scripts.js");
+  eleventyConfig.addPassthroughCopy("src/Buy-Son-Source.txt");
   eleventyConfig.addPassthroughCopy("src/BuffaloPorn");
 
   return {
