@@ -1,5 +1,7 @@
 <div class="topnav">
   {%- for item in site.nav %}
+    {%- if item.enabled %}
   <a href="{{ item.url }}">{{ item.label }}</a>
+    {%- endif %}
   {%- endfor %}
 </div>
