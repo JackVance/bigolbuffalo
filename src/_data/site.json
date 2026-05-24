@@ -1,0 +1,12 @@
+{
+  "title": "Big Ol' Buffalo",
+  "gaId": "G-E4J7YVBMNM",
+  "nav": [
+    { "url": "/", "label": "Big Ol' Buffalo Detector" },
+    { "url": "/EnterTheBison.html", "label": "Enter the Bison" },
+    { "url": "/BuffaloBarkMachine.html", "label": "Buffalo Bark Machine" },
+    { "url": "/Bython.html", "label": "Bython Projects" }
+  ],
+  "contact": "definitelyisntjack@Gmail.com",
+  "donateUrl": "https://paypal.me/pools/c/8iU7betk2r"
+}

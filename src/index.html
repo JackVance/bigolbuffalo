@@ -1,0 +1,42 @@
+---
+layout: layouts/base.njk
+title: Big Ol' Buffalo
+bodyClass: home
+extraHead: |
+  <style>
+    html, body.home { height: 100%; }
+    body.home {
+      background: url("/BuffaloPorn/MTVCribs.jpg") no-repeat center center fixed;
+      background-size: cover;
+    }
+  </style>
+  <script>
+    function fetchBuffalo() {
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function () {
+        if (this.readyState === 4 && this.status === 200) {
+          document.getElementById("my-demo").innerHTML = this.responseText;
+        }
+      };
+      xhttp.open("GET", "https://fasjcpa51j.execute-api.us-east-1.amazonaws.com/prod/MyServerlessWebsite", true);
+      xhttp.send();
+    }
+  </script>
+---
+<div align="center">
+  <br><br><br><br>
+  <h1><span id="my-demo">Who's a Big Ol' Buffalo?</span></h1>
+  <button onclick="fetchBuffalo()">tell me!</button>
+  <br>
+  <img src="/BuffaloPorn/BISON.jpg" alt="Bison">
+  <br>
+</div>
+
+<div align="center">
+  <h1><a href="/EnterTheBison.html">Enter The Bison</a></h1>
+  <br>
+  <h2><a href="/BuffaloBarkMachine.html">Buffalo Bark Machine</a></h2>
+  <br>
+  <h2><a href="/Bython.html">Bython Projects</a></h2>
+  <br><br><br>
+</div>
