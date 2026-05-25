@@ -1,0 +1,387 @@
+---
+layout: layouts/standalone.njk
+title: About Buffalo Bark Machine
+aboutUrl: /BuffaloBarkMachine.html
+aboutLabel: Back to the machine
+---
+<style>
+    :root {
+        --accent-blue: #83b0d6;
+        --accent-green: #00cc96;
+        --accent-red-light: #ec6c5b;
+    }
+    body {
+        background-color: #696969;
+        color: white;
+    }
+    .main-content {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 40px 24px 60px;
+    }
+    .main-content h1 {
+        color: var(--accent-blue);
+        font-size: 28px;
+        margin-bottom: 4px;
+    }
+    .main-content .subtitle {
+        opacity: 0.7;
+        margin-top: 0;
+        font-size: 14px;
+    }
+    .about-section {
+        margin: 40px 0;
+    }
+    .about-section h2 {
+        color: var(--accent-blue);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        padding-bottom: 8px;
+        margin-top: 40px;
+    }
+    .about-section p {
+        margin: 12px 0;
+    }
+    .about-section ul {
+        line-height: 1.8;
+    }
+    .about-section code {
+        background: rgba(0, 0, 0, 0.25);
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-family: 'Consolas', 'Monaco', monospace;
+        font-size: 0.9em;
+        color: var(--accent-blue);
+    }
+    .arch-diagram {
+        background: rgba(0, 0, 0, 0.2);
+        padding: 24px;
+        border-radius: 6px;
+        margin: 20px 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+    }
+    .arch-row {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+        width: 100%;
+    }
+    .arch-node {
+        background: rgba(131, 176, 214, 0.15);
+        border: 1px solid var(--accent-blue);
+        border-radius: 6px;
+        padding: 12px 16px;
+        text-align: center;
+        min-width: 140px;
+        font-size: 14px;
+    }
+    .arch-node.user {
+        background: rgba(0, 204, 150, 0.15);
+        border-color: var(--accent-green);
+    }
+    .arch-node.compute {
+        background: rgba(222, 59, 62, 0.15);
+        border-color: var(--accent-red-light);
+    }
+    .arch-node.storage {
+        background: rgba(236, 108, 91, 0.15);
+        border-color: var(--accent-red-light);
+    }
+    .arch-node.external {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.4);
+    }
+    .arch-node .node-title {
+        font-weight: bold;
+        margin-bottom: 4px;
+    }
+    .arch-node .node-detail {
+        font-size: 12px;
+        opacity: 0.85;
+    }
+    .arrow-down {
+        font-size: 20px;
+        color: var(--accent-blue);
+        line-height: 1;
+    }
+    .stack-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 16px 0;
+    }
+    .stack-table th, .stack-table td {
+        padding: 10px 12px;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .stack-table th {
+        background: rgba(0, 0, 0, 0.25);
+        color: var(--accent-blue);
+        font-size: 14px;
+    }
+    .stack-table tr:hover {
+        background: rgba(255, 255, 255, 0.04);
+    }
+    .stack-table td:first-child {
+        font-weight: bold;
+        white-space: nowrap;
+    }
+    .flow-steps {
+        list-style: none;
+        padding: 0;
+        counter-reset: step;
+    }
+    .flow-steps li {
+        counter-increment: step;
+        padding: 12px 12px 12px 50px;
+        margin: 10px 0;
+        background: rgba(0, 0, 0, 0.15);
+        border-left: 3px solid var(--accent-blue);
+        border-radius: 4px;
+        position: relative;
+    }
+    .flow-steps li::before {
+        content: counter(step);
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: var(--accent-blue);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 14px;
+    }
+    .legend {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        font-size: 12px;
+        margin-top: 8px;
+        flex-wrap: wrap;
+        opacity: 0.85;
+    }
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .legend-swatch {
+        width: 14px;
+        height: 14px;
+        border-radius: 3px;
+        border: 1px solid;
+    }
+</style>
+
+<div class="main-content">
+    <h1>About the Buffalo Bark Machine</h1>
+    <p class="subtitle">A 2018 text-to-speech demo, still alive in 2026</p>
+
+    <div class="about-section">
+        <h2>What This Is</h2>
+        <p>
+            You type some text, pick a "buffalo dialect" (really an
+            <a href="https://docs.aws.amazon.com/polly/latest/dg/voicelist.html" target="_blank" rel="noopener">Amazon Polly voice</a>),
+            click "Say it!", and a few seconds later a playable MP3 of that text
+            in that voice shows up in the results table. Every post gets a UUID;
+            you can search them back later by ID, or use <code>*</code> to list
+            everything in the database.
+        </p>
+        <p>
+            Originally built in 2018 following an AWS reference architecture
+            for serverless text-to-speech. Backend went dark sometime between
+            then and now (the DynamoDB table got deleted at some point),
+            revived in 2026 with the Lambdas migrated from Python 2.7 to 3.12.
+        </p>
+    </div>
+
+    <div class="about-section">
+        <h2>Architecture at a Glance</h2>
+        <div class="arch-diagram">
+            <div class="arch-row">
+                <div class="arch-node user">
+                    <div class="node-title">Your Browser</div>
+                    <div class="node-detail">HTML + jQuery 3.7.1</div>
+                </div>
+            </div>
+            <div class="arrow-down">&#9660;</div>
+            <div class="arch-row">
+                <div class="arch-node">
+                    <div class="node-title">API Gateway</div>
+                    <div class="node-detail">PostReaderAPI &mdash; POST + GET</div>
+                </div>
+            </div>
+            <div class="arrow-down">&#9660;</div>
+            <div class="arch-row">
+                <div class="arch-node compute">
+                    <div class="node-title">Lambda: NewPosts</div>
+                    <div class="node-detail">Writes row + publishes SNS</div>
+                </div>
+                <div class="arch-node compute">
+                    <div class="node-title">Lambda: GetPosts</div>
+                    <div class="node-detail">Reads from DynamoDB</div>
+                </div>
+            </div>
+            <div class="arrow-down">&#9660;</div>
+            <div class="arch-row">
+                <div class="arch-node">
+                    <div class="node-title">SNS topic</div>
+                    <div class="node-detail">New_Posts &rarr; triggers worker</div>
+                </div>
+                <div class="arch-node storage">
+                    <div class="node-title">DynamoDB</div>
+                    <div class="node-detail">"posts" &mdash; id, voice, text, status, url</div>
+                </div>
+            </div>
+            <div class="arrow-down">&#9660;</div>
+            <div class="arch-row">
+                <div class="arch-node compute">
+                    <div class="node-title">Lambda: ConvertToAudio</div>
+                    <div class="node-detail">Worker &mdash; synthesizes + uploads</div>
+                </div>
+            </div>
+            <div class="arrow-down">&#9660;</div>
+            <div class="arch-row">
+                <div class="arch-node external">
+                    <div class="node-title">Amazon Polly</div>
+                    <div class="node-detail">Text &rarr; MP3 audio stream</div>
+                </div>
+                <div class="arch-node storage">
+                    <div class="node-title">S3 bucket</div>
+                    <div class="node-detail">pollymp3pail &mdash; public MP3s</div>
+                </div>
+            </div>
+        </div>
+        <div class="legend">
+            <span class="legend-item"><span class="legend-swatch" style="background:rgba(0,204,150,0.15);border-color:var(--accent-green);"></span> Client</span>
+            <span class="legend-item"><span class="legend-swatch" style="background:rgba(131,176,214,0.15);border-color:var(--accent-blue);"></span> AWS edge / routing</span>
+            <span class="legend-item"><span class="legend-swatch" style="background:rgba(222,59,62,0.15);border-color:var(--accent-red-light);"></span> Compute</span>
+            <span class="legend-item"><span class="legend-swatch" style="background:rgba(236,108,91,0.15);border-color:var(--accent-red-light);"></span> Storage</span>
+            <span class="legend-item"><span class="legend-swatch" style="background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.4);"></span> External</span>
+        </div>
+    </div>
+
+    <div class="about-section">
+        <h2>What Happens When You Click "Say it!"</h2>
+        <ol class="flow-steps">
+            <li>
+                The browser POSTs <code>{voice, text}</code> as JSON to the API
+                Gateway endpoint.
+            </li>
+            <li>
+                API Gateway invokes <strong>PostReader_NewPosts</strong>. The
+                Lambda generates a UUID, writes a new row to the
+                <code>posts</code> DynamoDB table with
+                <code>status: "PROCESSING"</code>, then publishes the UUID as a
+                message to the <code>New_Posts</code> SNS topic. Returns the
+                UUID to the browser.
+            </li>
+            <li>
+                SNS fans out the message to its only subscriber:
+                <strong>PostReader_ConvertToAudio</strong>. (This decoupling
+                means NewPosts can return the post ID immediately without
+                waiting on Polly.)
+            </li>
+            <li>
+                ConvertToAudio looks up the row in DynamoDB, splits the text into
+                ~1,000-character blocks (Polly's per-call limit), and calls
+                <code>Polly.synthesize_speech</code> on each block. The audio
+                streams are concatenated into a single MP3 file in
+                <code>/tmp/</code>.
+            </li>
+            <li>
+                The MP3 is uploaded to S3 (<code>pollymp3pail/&lt;uuid&gt;.mp3</code>)
+                with a public-read ACL, and the DynamoDB row is updated:
+                <code>status: "UPDATED"</code> with the S3 URL.
+            </li>
+            <li>
+                Later, when you "Search" by post ID (or <code>*</code>),
+                <strong>PostReader_GetPosts</strong> queries / scans the table
+                and returns the rows. The browser renders each row as a
+                table entry; if a <code>url</code> is present it embeds an
+                <code>&lt;audio&gt;</code> player pointing at the S3 MP3.
+            </li>
+        </ol>
+    </div>
+
+    <div class="about-section">
+        <h2>Tech Stack</h2>
+        <table class="stack-table">
+            <thead>
+                <tr>
+                    <th>Layer</th>
+                    <th>Tools</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Frontend</td>
+                    <td>Static HTML + jQuery 3.7.1 (only the bark page uses jQuery; everything else on the site is plain JS)</td>
+                </tr>
+                <tr>
+                    <td>API layer</td>
+                    <td>AWS API Gateway (REST, regional)</td>
+                </tr>
+                <tr>
+                    <td>Compute</td>
+                    <td>3 &times; AWS Lambda (Python 3.12) &mdash; <code>PostReader_NewPosts</code>, <code>PostReader_GetPosts</code>, <code>PostReader_ConvertToAudio</code></td>
+                </tr>
+                <tr>
+                    <td>Speech synthesis</td>
+                    <td>Amazon Polly (~40 voices across a dozen languages)</td>
+                </tr>
+                <tr>
+                    <td>Message bus</td>
+                    <td>Amazon SNS topic <code>New_Posts</code> (one subscriber: the audio-worker Lambda)</td>
+                </tr>
+                <tr>
+                    <td>Database</td>
+                    <td>Amazon DynamoDB table <code>posts</code> (on-demand billing, single hash key <code>id</code>)</td>
+                </tr>
+                <tr>
+                    <td>Audio storage</td>
+                    <td>Amazon S3 bucket <code>pollymp3pail</code> &mdash; public objects, no CDN in front</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="about-section">
+        <h2>Hosting &amp; Cost</h2>
+        <p>
+            Entirely AWS free-tier at the volume this thing actually sees
+            (single-digit requests per month, most months zero). The only line
+            items that ever bill are pennies for S3 storage of accumulated MP3s
+            and DynamoDB on-demand reads. Estimated cost:
+            <strong>$0/month, rounding up</strong>.
+        </p>
+        <p>
+            Because everything is serverless / on-demand, there's nothing
+            running when nobody's using it. Cold-start latency on the Lambdas
+            is around 300&ndash;500ms; a full POST-to-MP3-ready round trip
+            takes 3&ndash;6 seconds.
+        </p>
+    </div>
+
+    <div class="about-section">
+        <h2>Source Code</h2>
+        <p>
+            Frontend (this page, and <code>scripts.js</code>) lives in the
+            bigolbuffalo repo. Lambda backend sources are committed under
+            <code>lambda/</code> in the same repo as a readable backup &mdash;
+            the canonical copies run in AWS Lambda.
+            <br>
+            <a href="https://github.com/JackVance/bigolbuffalo" target="_blank" rel="noopener">github.com/JackVance/bigolbuffalo</a>
+        </p>
+    </div>
+</div>
