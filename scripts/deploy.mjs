@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { execSync } from "node:child_process";
+import { rmSync } from "node:fs";
 
 const BUCKET = "bigolbuffalo.com";
 const DISTRIBUTION_ID = "E2LU60HYKV3X5S";
@@ -10,6 +11,10 @@ function step(label, cmd) {
   console.log(`$ ${cmd}\n`);
   execSync(cmd, { stdio: "inherit" });
 }
+
+console.log("\n--- clean ---");
+rmSync("_site", { recursive: true, force: true });
+console.log("removed _site/");
 
 step("build", "npx eleventy");
 step("sync", `aws s3 sync _site/ s3://${BUCKET}/ --delete`);
