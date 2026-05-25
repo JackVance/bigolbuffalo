@@ -4,4 +4,7 @@
   <a href="{{ item.url }}">{{ item.label }}</a>
     {%- endif %}
   {%- endfor %}
+  {%- if aboutUrl %}
+  <a class="right" href="{{ aboutUrl }}">{{ aboutLabel or "About this page" }}</a>
+  {%- endif %}
 </div>

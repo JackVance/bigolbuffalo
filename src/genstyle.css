@@ -36,6 +36,11 @@ body {
   color: black;
 }
 
+/* Right-align utility links (e.g. "About this page") */
+.topnav a.right {
+  float: right;
+}
+
 /* Style the content */
 .content {
   background-color: #696969;
