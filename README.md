@@ -62,32 +62,23 @@ npm run build          # writes _site/
 npm run clean          # remove _site/
 ```
 
-## Deploying to S3
-
-After `npm run build`, sync the `_site/` directory to the bucket:
+## Deploying
 
 ```
-aws s3 sync _site/ s3://bigolbuffalo.com/ --delete
+npm run deploy
 ```
 
-`--delete` removes files from the bucket that no longer exist in `_site/`. Omit it the first time if you want to be cautious.
+That runs `scripts/deploy.mjs`, which does three things:
 
-## HTTPS (CloudFront)
+1. `npx eleventy` — build `_site/`
+2. `aws s3 sync _site/ s3://bigolbuffalo.com/ --delete` — push to S3
+3. `aws cloudfront create-invalidation --distribution-id E2LU60HYKV3X5S --paths "/*"` — flush the CloudFront cache so visitors see the new version immediately
 
-S3 website endpoints don't terminate TLS for custom domains, which is why
-`https://bigolbuffalo.com` doesn't resolve today. To fix it:
+Without step 3 the CDN keeps serving the old content for up to a day. CloudFront gives you 1,000 free invalidation paths per month; `/*` counts as 1 path, so cost is effectively zero.
 
-1. Request a free certificate for `bigolbuffalo.com` (and `www.bigolbuffalo.com`)
-   in **AWS Certificate Manager** in **us-east-1** (CloudFront requires us-east-1).
-2. Create a **CloudFront distribution** with the S3 bucket as the origin.
-   Use the REST endpoint (`bigolbuffalo.com.s3.amazonaws.com`) with an
-   Origin Access Control, not the website endpoint — or, if you need
-   directory-index redirect behavior, keep the website endpoint as a custom
-   HTTP origin.
-3. Attach the ACM cert and set the Alternate Domain Name to `bigolbuffalo.com`.
-4. Set **Viewer Protocol Policy** = "Redirect HTTP to HTTPS".
-5. In Route 53 (or your DNS), point `bigolbuffalo.com` at the CloudFront
-   distribution (`d1234.cloudfront.net`) via an ALIAS / CNAME record.
+## Infrastructure (already wired up)
 
-After that, all the internal links in this site (which are now relative paths
-like `/EnterTheBison.html`) will inherit whichever scheme the visitor used.
+- **S3 bucket**: `bigolbuffalo.com` in `us-east-1`. Configured as a static website with index document `index.html` and error document `error.html`. Used as a custom HTTP origin behind CloudFront (NOT a bucket origin with OAC — keeping it as a website endpoint preserves index-document and error-page routing).
+- **CloudFront distribution**: `E2LU60HYKV3X5S` (domain `d12i18v5yfe2zb.cloudfront.net`). Viewer protocol redirects HTTP to HTTPS. Origin is the S3 website endpoint over HTTP only.
+- **ACM certificate**: in `us-east-1` covering `bigolbuffalo.com` and `www.bigolbuffalo.com`. Auto-renews. Free (non-exportable).
+- **Route 53**: hosted zone for `bigolbuffalo.com`. Apex and `www` are A/AAAA aliases pointing at the CloudFront distribution.
