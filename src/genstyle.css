@@ -39,6 +39,7 @@ body {
 /* Right-align utility links (e.g. "About this page") */
 .topnav a.right {
   float: right;
+  font-style: italic;
 }
 
 /* Embedded pages: iframe fills the viewport between header and footer */
