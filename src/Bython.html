@@ -10,6 +10,16 @@ title: Bython
 <br>
 <a href="/BuffaloBarkMachine.html">Buffalo Bark Machine</a>
 <h2>Serverless text-to-speech demo. Type some text, pick from ~40 Amazon Polly voices, and a Python Lambda worker synthesizes the audio in the background. Backend is three Python 3.12 Lambdas wired through API Gateway, SNS, DynamoDB, and S3.</h2>
+{%- if collections.locals and collections.locals.length > 0 %}
+<br><br>
+<h2>Locals Only. "About" Pages and Source Code</h2>
+<br>
+{%- for item in collections.locals %}
+<a href="{{ item.url }}">{{ item.data.projectName or item.data.title }}</a>
+<h2>{{ item.data.shortDescription }}</h2>
+<br>
+{%- endfor %}
+{%- endif %}
 <br><br><br>
 <img src="/BuffaloPorn/buffaloFight.jpg" alt="">
 <br><br>

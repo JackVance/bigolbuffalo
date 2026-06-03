@@ -12,6 +12,7 @@ module.exports = function (eleventyConfig) {
   // component for portability but aren't web assets — exclude from the build.
   eleventyConfig.ignores.add("src/BuffaloBarkMachine/README.md");
   eleventyConfig.ignores.add("src/BuffaloBarkMachine/backend");
+  eleventyConfig.ignores.add("src/Locals/README.md");
 
   return {
     dir: {

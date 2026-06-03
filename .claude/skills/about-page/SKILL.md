@@ -73,14 +73,46 @@ would clobber the about page's own design.
 
 ## File location
 
-| Source page lives at | About page goes at |
+| Project type | About page goes at |
 |---|---|
-| `src/<PageName>.html` (top-level) | `src/<PageName>-about.html` |
-| `src/<ComponentDir>/<PageName>.html` (consolidated component) | `src/<ComponentDir>/<PageName>-about.html` |
+| Live interactive page with sibling source (`src/<PageName>.html`) | `src/<PageName>-about.html` |
+| Consolidated component (`src/<ComponentDir>/<PageName>.html`) | `src/<ComponentDir>/<PageName>-about.html` |
+| **Non-interactive — write-up + source only, no live UI on the site** | `src/Locals/<ProjectName>-about.html` |
 
 The parent `src.json` permalink rule (or, for consolidated components,
-the directory data file) ensures both pages ship at root URLs
-(`/<PageName>.html` and `/<PageName>-about.html`).
+the directory data file) ensures the file ships at the URL you'd
+expect for its directory.
+
+### Locals (non-interactive projects)
+
+For projects that don't have a live UI on bigolbuffalo — typically things
+where the value to a visitor is the architecture write-up and a source-code
+link, not a running app — drop the about page in `src/Locals/`.
+
+Files in that directory are auto-tagged `locals` (via the directory
+data file `src/Locals/Locals.json`) and auto-listed under a "Locals
+Only" subheader on `/Bython.html` — no manual edits to Bython.html
+required per project.
+
+Front matter for a Local project requires two extra fields beyond the
+normal about-page front matter, used to render the Bython.html listing:
+
+```yaml
+---
+layout: layouts/standalone.njk
+title: About <ProjectName>
+projectName: <ProjectName>             # display label on Bython.html
+shortDescription: <one-liner>          # appears under the link
+aboutUrl: /Bython.html
+aboutLabel: Back to Bython
+---
+```
+
+`aboutUrl` points back to `/Bython.html` because that's the page that
+listed it — clicking "Back" in the topnav takes the visitor back to the
+project index.
+
+See `src/Locals/README.md` for the full pattern.
 
 ## Topnav wiring
 
