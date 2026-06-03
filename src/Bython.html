@@ -3,7 +3,7 @@ layout: layouts/page.njk
 title: Bython
 ---
 <h1>Bython Projects</h1>
-<h2>Python-Based Projects</h2>
+<h2>Petting Zoo - Interactive Demos</h2>
 <br>
 <a href="/StockDashboard.html">Buy-Son Stock Visualizer</a>
 <h2>Interactive dashboard to retrieve and visualize historical stock prices and key information from recent financial reports. Built with Python and several open-source libraries. Application is hosted on the Amazon Web Services cloud using a serverless architecture; data is pulled from Yahoo Finance through an open-source API.</h2>
@@ -12,7 +12,7 @@ title: Bython
 <h2>Serverless text-to-speech demo. Type some text, pick from ~40 Amazon Polly voices, and a Python Lambda worker synthesizes the audio in the background. Backend is three Python 3.12 Lambdas wired through API Gateway, SNS, DynamoDB, and S3.</h2>
 {%- if collections.locals and collections.locals.length > 0 %}
 <br><br>
-<h2>Locals Only. "About" Pages and Source Code</h2>
+<h2>Locals Only - "About" Pages and Source Code</h2>
 <br>
 {%- for item in collections.locals %}
 <a href="{{ item.url }}">{{ item.data.projectName or item.data.title }}</a>
