@@ -1,6 +1,6 @@
 ---
 name: about-page-bigolbuffalo
-description: Bigolbuffalo-specific adapter for the global about-page skill. When the user asks to draft an about page for a project page on bigolbuffalo.com (phrases like "add an about page for the bark machine", "draft an about doc for the stock dashboard"), invoke this skill alongside the global `about-page` skill. The global skill provides the universal patterns (section order, accent palette, SVG diagram conventions). This skill provides the bigolbuffalo-specific overrides: Eleventy front matter pointing to layouts/standalone.njk, src/ output paths, aboutUrl topnav wiring on both source and about pages, and GitHub link scoping to the bigolbuffalo repo.
+description: Bigolbuffalo-specific adapter for the global about-page skill. Invoke when (1) the user asks to draft a new about page for a project page on bigolbuffalo.com (phrases like "add an about page for the bark machine", "draft an about doc for the stock dashboard"), OR (2) the user has copied a standalone-HTML about page from another project's repo into src/Locals/ (or elsewhere in src/) and needs it adapted to bigolbuffalo's Eleventy form (phrases like "adapt this standalone HTML for bigolbuffalo", "I dropped a file from another project, please convert it", "fix up the about page I just copied in", "the other project generated it with the global skill, duplicate it here"). The global skill provides universal patterns (section order, accent palette, SVG diagram conventions); this skill provides the bigolbuffalo-specific overrides (Eleventy front matter pointing to layouts/standalone.njk, src/ output paths, aboutUrl topnav wiring on both source and about pages, GitHub link scoping) AND documents the four-step transform for converting incoming standalone HTML files into the Eleventy form.
 ---
 
 # About Page — bigolbuffalo adapter
@@ -70,6 +70,171 @@ aboutLabel: Back to <whatever fits — "the dashboard", "the machine", etc.>
 `layouts/standalone.njk` is required — it wraps the content in the
 site's topnav + footer without the `.content` box. `layouts/page.njk`
 would clobber the about page's own design.
+
+## Adapting incoming standalone HTML from another project
+
+A common workflow: a project lives in its own repo, the user ran the
+**global** `about-page` skill there to produce a complete standalone
+HTML file, and they've now copied that file into `src/Locals/` (or
+elsewhere under `src/`) here. The file is in **standalone-HTML form**
+— it has `<!DOCTYPE html>`, `<html>`, `<head>`, `<body>` wrappers and
+self-contained styling — and needs four small transforms before it'll
+integrate with the site (auto-listing on `/Bython.html`, site topnav
++ footer wrap, no CSS conflicts).
+
+### Trigger
+
+If a file under `src/` starts with `<!DOCTYPE html>` rather than YAML
+front matter (`---` on the first line), it's in standalone form and
+needs the conversion below.
+
+### Idempotency
+
+If the file already starts with YAML front matter, **stop — do not
+re-adapt**. It's already in Eleventy form.
+
+### The four transforms
+
+#### Transform 1: replace the head wrappers with front matter
+
+The standalone file opens with:
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About <Project Name></title>
+    <style>
+```
+
+Replace everything from `<!DOCTYPE html>` through the **opening**
+`<style>` tag with YAML front matter plus a bare `<style>` tag
+(preserving the CSS inside):
+
+```yaml
+---
+layout: layouts/standalone.njk
+title: About <Project Name>
+projectName: <projectName>
+shortDescription: <one-liner>
+aboutUrl: /Bython.html
+aboutLabel: Back to Bython
+---
+<style>
+```
+
+See "Deriving the front-matter fields" below for the placeholder values.
+
+#### Transform 2: drop the html/body CSS reset
+
+Inside the `<style>` block, the standalone form includes a reset rule:
+
+```css
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+}
+```
+
+Delete this block entirely. The site's `genstyle.css` already sets
+body margin and font-family; this rule conflicts.
+
+Leave all the other CSS (`:root`, `body { background-color: ... }`,
+`.main-content`, `.about-section`, `.arch-svg`, `.stack-table`,
+`.flow-steps`, `.legend`, `.diagram-caption`) intact.
+
+#### Transform 3: drop </head></body> between style and content
+
+The standalone form has:
+```html
+    </style>
+</head>
+<body>
+<div class="main-content">
+```
+
+Replace with:
+```html
+    </style>
+<div class="main-content">
+```
+
+The layout provides `<head>` and `<body>` wrappers.
+
+#### Transform 4: drop closing </body></html>
+
+The standalone form ends with:
+```html
+    </div>
+</div>
+</body>
+</html>
+```
+
+Replace with just:
+```html
+    </div>
+</div>
+```
+
+The layout provides the closing tags.
+
+### Deriving the front-matter fields
+
+| Field | Where it comes from |
+|---|---|
+| `title` | The contents of the original `<title>...</title>` (e.g. `About genome-eval`) |
+| `projectName` | The filename with `-about.html` stripped (e.g. `genome-eval-about.html` → `genome-eval`) |
+| `shortDescription` | The contents of the original `<p class="subtitle">...</p>` near the top of the body. If no subtitle is present, ask the user. |
+| `aboutUrl` | `/Bython.html` for files in `src/Locals/`. For other locations, see the "File location" table below. |
+| `aboutLabel` | `Back to Bython` for `src/Locals/`. For other locations, match whichever page wraps the about page (e.g., `Back to the dashboard`). |
+
+### Worked example
+
+Adapting `genome-eval-about.html` — the canonical example, applied in
+commit `e0b8033`.
+
+Original first 7 lines:
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About genome-eval</title>
+    <style>
+```
+
+After Transform 1:
+```yaml
+---
+layout: layouts/standalone.njk
+title: About genome-eval
+projectName: genome-eval
+shortDescription: How a raw consumer-DNA file becomes an evidence-graded notebook of findings — entirely on your own machine.
+aboutUrl: /Bython.html
+aboutLabel: Back to Bython
+---
+<style>
+```
+
+(`shortDescription` was lifted verbatim from the file's
+`<p class="subtitle">` near the top of the body.)
+
+The rest of the file is the `<style>` block with Transform 2 applied
+(the `html, body { margin: 0; ... }` rule deleted), then `</style>`,
+then `<div class="main-content">...</div>`. Original `</body></html>`
+at the end is dropped.
+
+### After adapting
+
+Run `npm run deploy` and follow the verification block in the "Deploy
+and verify" section below — check that the about page renders with
+the site topnav (including "Back to Bython" right-aligned italic),
+and that `/Bython.html` now lists the new entry under the "Locals
+Only" subheader.
 
 ## File location
 
