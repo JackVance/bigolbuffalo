@@ -10,6 +10,41 @@ bigolbuffalo's Eleventy setup. **Read the global skill first** for all
 design rules (section structure, CSS palette, SVG conventions). Then
 apply the bigolbuffalo-specific overrides below.
 
+## Pinned palette (overrides global)
+
+Bigolbuffalo's about pages use these specific values. Use them verbatim
+even if the global about-page skill's palette has been changed
+upstream — design consistency across the site's existing about pages
+matters more than tracking whatever the global default has become.
+
+```css
+:root {
+    --accent-blue: #83b0d6;
+    --accent-green: #00cc96;
+    --accent-red-light: #ec6c5b;
+}
+body {
+    background-color: #696969;  /* matches the site's .content gray */
+    color: white;
+}
+```
+
+SVG node fills/strokes (also pinned):
+
+| Category | Node fill | Stroke |
+|---|---|---|
+| Client | `#00CC96` fill-opacity 0.15 | `#00CC96` |
+| Edge / routing | `#83B0D6` fill-opacity 0.15 | `#83B0D6` |
+| Compute | `#DE3B3E` fill-opacity 0.18 | `#EC6C5B` |
+| Storage | `#EC6C5B` fill-opacity 0.15 | `#EC6C5B` |
+| External | `#FFFFFF` fill-opacity 0.08 | `#FFFFFF` stroke-opacity 0.4 |
+
+Arrowhead marker fill: `#83B0D6`.
+
+If the user explicitly asks for a different palette (e.g., for a new
+project with a distinct visual identity), that overrides this pinning.
+But don't pull in upstream global changes silently.
+
 ## Output format
 
 **Don't** produce standalone HTML. Produce an Eleventy template with
